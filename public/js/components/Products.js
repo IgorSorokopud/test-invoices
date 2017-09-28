@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 class Products extends Component {
     render() {
-
-        console.log('test store ??', this.props.testStore);
         return (
             <div className="container table-responsive">
                 <table className="table table-hover">
@@ -20,7 +18,7 @@ class Products extends Component {
                     </tr>
                     </thead>
 
-                    {this.props.testStore.products.map(function (product, index) {
+                    {this.props.Store.products.map(function (product, index) {
 
                         return (
                             <tbody key={index}>
@@ -41,7 +39,7 @@ class Products extends Component {
 }
 export default connect(
     state => ({
-        testStore: state
+        Store: state
     }),
     dispatch => ({})
 )(Products);

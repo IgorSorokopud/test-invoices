@@ -12,15 +12,13 @@ import Products from './components/Products.js';
 import Customers from './components/Customers.js';
 
 import App from './components/App.js';
-import {newProducts} from './actions/products';
+import {products} from './actions/products';
+import {customers} from './actions/customers';
 
 var store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 
-store.subscribe(function () {
-    console.log('subscribe', store.getState());
-});
-
-store.dispatch(newProducts());
+store.dispatch(products());
+store.dispatch(customers());
 
 ReactDOM.render(
     <Provider store={store}>

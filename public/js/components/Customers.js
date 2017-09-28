@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 class App extends Component {
     render() {
-        console.log('test store', this.props.testStore);
         return (
             <div className="container table-responsive">
                 <table className="table table-hover">
@@ -18,23 +17,21 @@ class App extends Component {
                     </tr>
                     </thead>
 
-                    <tbody>
-                    <tr>
-                        <td> Mark Benson</td>
-                        <td> 353 Rochester St, Rialto FL 43250</td>
-                        <td> 555-534-2342</td>
-                        <td>2017-09-28T09:07:59.443</td>
-                        <td>2017-09-28T09:07:59.443Z</td>
-                    </tr>
+                    {this.props.Store.customers.map(function (customer, index) {
 
-                    <tr>
-                        <td> Bob Smith</td>
-                        <td> 353 Rochester St, Rialto FL 43250</td>
-                        <td> 555-534-2342</td>
-                        <td>2017-09-28T09:07:59.443</td>
-                        <td>2017-09-28T09:07:59.443Z</td>
-                    </tr>
-                    </tbody>
+                        return (
+                            <tbody key={index}>
+                            <tr>
+                                <td> {index + 1}</td>
+                                <td> {customer.name}</td>
+                                <td> {customer.address}</td>
+                                <td> {customer.phone}</td>
+                                <td>{customer.createdAt}</td>
+                                <td>{customer.updatedAt}</td>
+                            </tr>
+                            </tbody>
+                        );
+                    })}
                 </table>
             </div>
         );
@@ -42,7 +39,7 @@ class App extends Component {
 }
 export default connect(
     state => ({
-        testStore: state
+        Store: state
     }),
     dispatch => ({})
 )(App);
