@@ -28669,7 +28669,10 @@ var AddInvoices = function (_Component) {
 
         var _this = _possibleConstructorReturn(this, (AddInvoices.__proto__ || Object.getPrototypeOf(AddInvoices)).call(this, props));
 
-        _this.state = { product: ['1'] };
+        _this.state = {
+            product: [],
+            name: []
+        };
         return _this;
     }
 
@@ -28681,22 +28684,24 @@ var AddInvoices = function (_Component) {
             this.props.Store.products.map(function (el) {
                 if (el.id === +e.target.value) {
                     self.setState({ product: self.state.product.concat(e.target.value) });
-                    var newInv = [{
-                        product: self.state.product.concat(e.target.value)
-                    }];
-                    self.props.onAddInvoice(newInv);
+                    self.setState({ name: self.state.name.concat(el.name) });
+                    //var newInv = [{
+                    //    product: self.state.product.concat(e.target.value)
+                    //}];
+                    //self.props.onAddInvoice(newInv);
                 }
             });
         }
     }, {
         key: 'render',
         value: function render() {
-            console.log('test store', this.props.Store);
             return _react2.default.createElement('div', { className: 'well' }, _react2.default.createElement('button', { type: 'button', className: 'btn btn-default' }, 'Create'), _react2.default.createElement('select', null, this.props.Store.customers.map(function (customer, index) {
                 return _react2.default.createElement('option', { key: index, value: customer.id }, customer.name);
-            })), _react2.default.createElement('select', { onChange: this.ClickHendle.bind(this) }, this.props.Store.products.map(function (product, index) {
+            })), _react2.default.createElement('div', { className: 'row' }, _react2.default.createElement('div', { className: 'col-md-2' }, _react2.default.createElement('select', { id: 'products', onChange: this.ClickHendle.bind(this) }, this.props.Store.products.map(function (product, index) {
                 return _react2.default.createElement('option', { key: index, value: product.id }, product.name);
-            })));
+            })), _react2.default.createElement('ul', { className: 'list-group' }, this.state.name.map(function (name, i) {
+                return _react2.default.createElement('li', { className: 'list-group-item', key: i }, name);
+            })))));
         }
     }]);
 

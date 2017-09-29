@@ -5,25 +5,28 @@ class AddInvoices extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {product: ['1']};
+        this.state = {
+            product: [],
+            name: []
+        };
     }
 
     ClickHendle(e) {
         var self = this;
 
         this.props.Store.products.map(function (el) {
-            if(el.id === +e.target.value) {
+            if (el.id === +e.target.value) {
                 self.setState({product: self.state.product.concat(e.target.value)});
-                var newInv = [{
-                    product: self.state.product.concat(e.target.value)
-                }];
-                self.props.onAddInvoice(newInv);
+                self.setState({name: self.state.name.concat(el.name)});
+                //var newInv = [{
+                //    product: self.state.product.concat(e.target.value)
+                //}];
+                //self.props.onAddInvoice(newInv);
             }
         });
     }
 
     render() {
-        console.log('test store', this.props.Store);
         return (
             <div className="well">
                 <button type="button" className="btn btn-default">Create</button>
@@ -36,13 +39,25 @@ class AddInvoices extends Component {
                     })}
                 </select>
 
-                <select onChange={this.ClickHendle.bind(this)}>
-                    {this.props.Store.products.map(function (product, index) {
-                        return (
-                            <option key={index} value={product.id}>{product.name}</option>
-                        );
-                    })}
-                </select>
+                <div className="row">
+                    <div className="col-md-2">
+                        <select id="products" onChange={this.ClickHendle.bind(this)}>
+                            {this.props.Store.products.map(function (product, index) {
+                                return (
+                                    <option key={index} value={product.id}>{product.name}</option>
+                                );
+                            })}
+                        </select>
+
+                        <ul className="list-group">
+                            {this.state.name.map(function (name, i) {
+                                return (
+                                    <li className="list-group-item" key={i}>{name}</li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -53,7 +68,7 @@ export default connect(
     }),
     dispatch => ({
         onAddInvoice: (arr) => {
-            dispatch({ type: 'ADD_INVOICE', payload: arr })
+            dispatch({type: 'ADD_INVOICE', payload: arr})
         }
     })
 )(AddInvoices);
