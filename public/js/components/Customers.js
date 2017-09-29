@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-class App extends Component {
+class Customers extends Component {
     render() {
         return (
             <div className="container table-responsive">
@@ -42,4 +42,4 @@ export default connect(
         Store: state
     }),
     dispatch => ({})
-)(App);
+)(Customers);

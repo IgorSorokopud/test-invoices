@@ -14,11 +14,13 @@ import Customers from './components/Customers.js';
 import App from './components/App.js';
 import {products} from './actions/products';
 import {customers} from './actions/customers';
+import {invoices} from './actions/invoices';
 
 var store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
 
 store.dispatch(products());
 store.dispatch(customers());
+store.dispatch(invoices());
 
 ReactDOM.render(
     <Provider store={store}>
