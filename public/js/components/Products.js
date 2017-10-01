@@ -6,7 +6,7 @@ class Products extends Component {
     render() {
         return (
             <div className="container table-responsive">
-                <table className="table table-hover">
+                <table className="table table-hover table-bordered">
 
                     <thead>
                     <tr role="row" className="heading">

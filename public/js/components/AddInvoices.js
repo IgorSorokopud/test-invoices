@@ -11,7 +11,8 @@ class AddInvoices extends Component {
             products: [],
             discount: null,
             quantity: null,
-            total: 0
+            total: 0,
+            result: 0
         };
     }
 
@@ -25,6 +26,8 @@ class AddInvoices extends Component {
         this.setState({
             discount: e.target.value
         });
+
+        this.calculateDiscount(e.target.value);
     }
 
     handleProductsChange(e) {
@@ -38,18 +41,22 @@ class AddInvoices extends Component {
                         name: el.name,
                         quantity: 1,
                         price: el.price
-                    }])
-                });
+                    }]),
 
-                self.calculateDiscount(+el.price);
+                    total: self.state.total += +el.price
+                });
             }
         });
+
+        self.calculateDiscount();
     }
 
-    calculateDiscount(total) {
-        var result = total - (total / 100 * this.state.discount);
+    calculateDiscount(discount) {
+        var discount = discount ? discount : this.state.discount;
+        var total = this.state.total;
+        var result = total - (total / 100 * discount).toFixed(2);
 
-        this.setState({total: this.state.total += result});
+        this.setState({result: result});
     }
 
     create() {
@@ -58,24 +65,23 @@ class AddInvoices extends Component {
         axios.post('/api/invoices', {
             "customer_id": self.state.customerId,
             "discount": self.state.discount,
-            "total": self.state.total
+            "total": self.state.result
         }).then(function (response) {
-
             self.state.products.forEach(function (product) {
                 axios.post('/api/invoices/' + +response.data.id + '/items', {
                     "product_id": product.id,
                     "quantity": product.quantity
                 })
             });
+
+            self.resetForm();
         });
 
         self.props.onAddInvoice([{
             "customer_id": self.state.customerId,
             "discount": self.state.discount,
-            "total": self.state.total
+            "total": self.state.result
         }]);
-
-        self.resetForm();
     }
 
     resetForm() {
@@ -90,6 +96,7 @@ class AddInvoices extends Component {
         this.setState({
             products: [],
             discount: 0,
+            result: 0,
             total: 0
         })
     }
@@ -98,7 +105,7 @@ class AddInvoices extends Component {
         var total = 0;
 
         return (
-            <div className="well">
+            <div className="well container">
                 <table className="table table-hover table-grid">
                     <thead>
                     <tr>
@@ -106,12 +113,11 @@ class AddInvoices extends Component {
                         <th>Products</th>
                         <th>Discount</th>
                         <th>Sum</th>
-                        <th>Total:
-                            {this.props.Store.invoices.map(function (invoice) {
+                        <th>Total: {this.props.Store.invoices.map(function (invoice) {
                                 total = total + invoice.total;
                             })}
 
-                            { total.toFixed(2)}
+                            {total.toFixed(2)} $
                         </th>
                     </tr>
                     </thead>
@@ -158,10 +164,10 @@ class AddInvoices extends Component {
                             </div>
                         </td>
                         <td>
-                            <input onBlur={this.handleDiscountChange.bind(this)} id="discount" type="number"/>
+                            <input onKeyUp={this.handleDiscountChange.bind(this)} id="discount" type="number"/>
                         </td>
                         <td>
-                            <span>{this.state.total.toFixed(2)} $</span>
+                            <span>{this.state.result.toFixed(2)} $</span>
                         </td>
                         <td>
                             <button onClick={this.create.bind(this)} type="button" className="btn btn-default">Create

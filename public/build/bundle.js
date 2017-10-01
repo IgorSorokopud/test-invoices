@@ -19716,7 +19716,7 @@ store.dispatch((0, _products.products)());
 store.dispatch((0, _customers.customers)());
 store.dispatch((0, _invoices.invoices)());
 
-_reactDom2.default.render(_react2.default.createElement(_reactRedux.Provider, { store: store }, _react2.default.createElement(_reactRouterDom.BrowserRouter, null, _react2.default.createElement('div', null, _react2.default.createElement(_reactRouterDom.Route, { path: '/', component: _App2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/products', component: _Products2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/customers', component: _Customers2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/invoices', component: _Invoices2.default })))), document.getElementById('app'));
+_reactDom2.default.render(_react2.default.createElement(_reactRedux.Provider, { store: store }, _react2.default.createElement(_reactRouterDom.BrowserRouter, null, _react2.default.createElement('div', null, _react2.default.createElement(_reactRouterDom.Route, { path: '/', component: _App2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/products', component: _Products2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/customers', component: _Customers2.default }), _react2.default.createElement(_reactRouterDom.Route, { path: '/invoices', component: _Invoices2.default }), _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Invoices2.default })))), document.getElementById('app'));
 
 /***/ }),
 /* 175 */
@@ -44175,12 +44175,12 @@ var Invoices = function (_Component) {
         value: function render() {
             var self = this;
 
-            return _react2.default.createElement('div', null, _react2.default.createElement(_AddInvoices2.default, null), _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Customer'), _react2.default.createElement('th', null, 'Discount'), _react2.default.createElement('th', null, 'Total'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), _react2.default.createElement('tbody', null, this.props.Store.invoices.map(function (invoice, index) {
+            return _react2.default.createElement('div', null, _react2.default.createElement(_AddInvoices2.default, null), _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover table-bordered' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Customer'), _react2.default.createElement('th', null, 'Discount'), _react2.default.createElement('th', null, 'Total'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), _react2.default.createElement('tbody', null, this.props.Store.invoices.map(function (invoice, index) {
                 return _react2.default.createElement('tr', { key: index }, _react2.default.createElement('td', null, ' ', index + 1), _react2.default.createElement('td', null, ' ', self.props.Store.customers.map(function (customers, i) {
                     if (+customers.id === +invoice.customer_id) {
                         return customers.name;
                     }
-                })), _react2.default.createElement('td', null, ' ', invoice.discount), _react2.default.createElement('td', null, ' ', invoice.total), _react2.default.createElement('td', null, (0, _moment2.default)(invoice.createdAt).format('YYYY-MM-DD HH:mm')), _react2.default.createElement('td', null, (0, _moment2.default)(invoice.updatedAt).format('YYYY-MM-DD HH:mm')));
+                })), _react2.default.createElement('td', null, ' ', invoice.discount), _react2.default.createElement('td', null, ' ', invoice.total.toFixed(2)), _react2.default.createElement('td', null, (0, _moment2.default)(invoice.createdAt).format('YYYY-MM-DD HH:mm')), _react2.default.createElement('td', null, (0, _moment2.default)(invoice.updatedAt).format('YYYY-MM-DD HH:mm')));
             })))));
         }
     }]);
@@ -44241,7 +44241,8 @@ var AddInvoices = function (_Component) {
             products: [],
             discount: null,
             quantity: null,
-            total: 0
+            total: 0,
+            result: 0
         };
         return _this;
     }
@@ -44259,6 +44260,8 @@ var AddInvoices = function (_Component) {
             this.setState({
                 discount: e.target.value
             });
+
+            this.calculateDiscount(e.target.value);
         }
     }, {
         key: 'handleProductsChange',
@@ -44273,19 +44276,23 @@ var AddInvoices = function (_Component) {
                             name: el.name,
                             quantity: 1,
                             price: el.price
-                        }])
-                    });
+                        }]),
 
-                    self.calculateDiscount(+el.price);
+                        total: self.state.total += +el.price
+                    });
                 }
             });
+
+            self.calculateDiscount();
         }
     }, {
         key: 'calculateDiscount',
-        value: function calculateDiscount(total) {
-            var result = total - total / 100 * this.state.discount;
+        value: function calculateDiscount(discount) {
+            var discount = discount ? discount : this.state.discount;
+            var total = this.state.total;
+            var result = total - (total / 100 * discount).toFixed(2);
 
-            this.setState({ total: this.state.total += result });
+            this.setState({ result: result });
         }
     }, {
         key: 'create',
@@ -44295,24 +44302,23 @@ var AddInvoices = function (_Component) {
             _axios2.default.post('/api/invoices', {
                 "customer_id": self.state.customerId,
                 "discount": self.state.discount,
-                "total": self.state.total
+                "total": self.state.result
             }).then(function (response) {
-
                 self.state.products.forEach(function (product) {
                     _axios2.default.post('/api/invoices/' + +response.data.id + '/items', {
                         "product_id": product.id,
                         "quantity": product.quantity
                     });
                 });
+
+                self.resetForm();
             });
 
             self.props.onAddInvoice([{
                 "customer_id": self.state.customerId,
                 "discount": self.state.discount,
-                "total": self.state.total
+                "total": self.state.result
             }]);
-
-            self.resetForm();
         }
     }, {
         key: 'resetForm',
@@ -44328,6 +44334,7 @@ var AddInvoices = function (_Component) {
             this.setState({
                 products: [],
                 discount: 0,
+                result: 0,
                 total: 0
             });
         }
@@ -44336,15 +44343,15 @@ var AddInvoices = function (_Component) {
         value: function render() {
             var total = 0;
 
-            return _react2.default.createElement('div', { className: 'well' }, _react2.default.createElement('table', { className: 'table table-hover table-grid' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', null, _react2.default.createElement('th', null, 'Customer'), _react2.default.createElement('th', null, 'Products'), _react2.default.createElement('th', null, 'Discount'), _react2.default.createElement('th', null, 'Sum'), _react2.default.createElement('th', null, 'Total:', this.props.Store.invoices.map(function (invoice) {
+            return _react2.default.createElement('div', { className: 'well container' }, _react2.default.createElement('table', { className: 'table table-hover table-grid' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', null, _react2.default.createElement('th', null, 'Customer'), _react2.default.createElement('th', null, 'Products'), _react2.default.createElement('th', null, 'Discount'), _react2.default.createElement('th', null, 'Sum'), _react2.default.createElement('th', null, 'Total: ', this.props.Store.invoices.map(function (invoice) {
                 total = total + invoice.total;
-            }), total.toFixed(2)))), _react2.default.createElement('thead', null, _react2.default.createElement('tr', null, _react2.default.createElement('td', null, _react2.default.createElement('div', { className: 'row' }, _react2.default.createElement('div', { className: 'col-md-6 col-lg-12' }, _react2.default.createElement('select', { onChange: this.handleCustomerChange.bind(this), id: 'customer' }, _react2.default.createElement('option', { defaultValue: 'selected' }, 'Customer'), this.props.Store.customers.map(function (customer, index) {
+            }), total.toFixed(2), ' $'))), _react2.default.createElement('thead', null, _react2.default.createElement('tr', null, _react2.default.createElement('td', null, _react2.default.createElement('div', { className: 'row' }, _react2.default.createElement('div', { className: 'col-md-6 col-lg-12' }, _react2.default.createElement('select', { onChange: this.handleCustomerChange.bind(this), id: 'customer' }, _react2.default.createElement('option', { defaultValue: 'selected' }, 'Customer'), this.props.Store.customers.map(function (customer, index) {
                 return _react2.default.createElement('option', { key: index, value: customer.id }, customer.name);
             }))))), _react2.default.createElement('td', null, _react2.default.createElement('div', { className: 'row' }, _react2.default.createElement('div', { className: 'col-md-6 col-lg-12' }, _react2.default.createElement('select', { onChange: this.handleProductsChange.bind(this), id: 'products' }, _react2.default.createElement('option', { defaultValue: 'selected' }, 'Product'), this.props.Store.products.map(function (product, index) {
                 return _react2.default.createElement('option', { key: index, value: product.id }, product.name);
             })), _react2.default.createElement('div', { className: 'pre-scrollable' }, _react2.default.createElement('ul', { className: 'list-group' }, this.state.products.map(function (product, i) {
                 return _react2.default.createElement('li', { className: 'list-group-item', key: i }, product.name, _react2.default.createElement('span', { className: 'pull-right' }, product.price, _react2.default.createElement('sup', null, ' $')));
-            })))))), _react2.default.createElement('td', null, _react2.default.createElement('input', { onBlur: this.handleDiscountChange.bind(this), id: 'discount', type: 'number' })), _react2.default.createElement('td', null, _react2.default.createElement('span', null, this.state.total.toFixed(2), ' $')), _react2.default.createElement('td', null, _react2.default.createElement('button', { onClick: this.create.bind(this), type: 'button', className: 'btn btn-default' }, 'Create'))))));
+            })))))), _react2.default.createElement('td', null, _react2.default.createElement('input', { onKeyUp: this.handleDiscountChange.bind(this), id: 'discount', type: 'number' })), _react2.default.createElement('td', null, _react2.default.createElement('span', null, this.state.result.toFixed(2), ' $')), _react2.default.createElement('td', null, _react2.default.createElement('button', { onClick: this.create.bind(this), type: 'button', className: 'btn btn-default' }, 'Create'))))));
         }
     }]);
 
@@ -45526,7 +45533,7 @@ var Products = function (_Component) {
     _createClass(Products, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Name'), _react2.default.createElement('th', null, 'Price'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), this.props.Store.products.map(function (product, index) {
+            return _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover table-bordered' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Name'), _react2.default.createElement('th', null, 'Price'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), this.props.Store.products.map(function (product, index) {
 
                 return _react2.default.createElement('tbody', { key: index }, _react2.default.createElement('tr', null, _react2.default.createElement('td', null, ' ', index + 1), _react2.default.createElement('td', null, ' ', product.name), _react2.default.createElement('td', null, ' ', product.price), _react2.default.createElement('td', null, (0, _moment2.default)(product.createdAt).format('YYYY-MM-DD HH:mm')), _react2.default.createElement('td', null, (0, _moment2.default)(product.updatedAt).format('YYYY-MM-DD HH:mm'))));
             })));
@@ -45587,7 +45594,7 @@ var Customers = function (_Component) {
     _createClass(Customers, [{
         key: 'render',
         value: function render() {
-            return _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Name'), _react2.default.createElement('th', null, 'Address'), _react2.default.createElement('th', null, 'Phone'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), this.props.Store.customers.map(function (customer, index) {
+            return _react2.default.createElement('div', { className: 'container table-responsive' }, _react2.default.createElement('table', { className: 'table table-hover table-bordered' }, _react2.default.createElement('thead', null, _react2.default.createElement('tr', { role: 'row', className: 'heading' }, _react2.default.createElement('th', null, 'Number'), _react2.default.createElement('th', null, 'Name'), _react2.default.createElement('th', null, 'Address'), _react2.default.createElement('th', null, 'Phone'), _react2.default.createElement('th', null, 'Created date'), _react2.default.createElement('th', null, 'Updated date'))), this.props.Store.customers.map(function (customer, index) {
 
                 return _react2.default.createElement('tbody', { key: index }, _react2.default.createElement('tr', null, _react2.default.createElement('td', null, ' ', index + 1), _react2.default.createElement('td', null, ' ', customer.name), _react2.default.createElement('td', null, ' ', customer.address), _react2.default.createElement('td', null, ' ', customer.phone), _react2.default.createElement('td', null, (0, _moment2.default)(customer.createdAt).format('YYYY-MM-DD HH:mm')), _react2.default.createElement('td', null, (0, _moment2.default)(customer.updatedAt).format('YYYY-MM-DD HH:mm'))));
             })));

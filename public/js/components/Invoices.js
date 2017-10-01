@@ -11,7 +11,7 @@ class Invoices extends Component {
             <div>
                 <AddInvoces />
                 <div className="container table-responsive">
-                    <table className="table table-hover">
+                    <table className="table table-hover table-bordered">
 
                         <thead>
                         <tr role="row" className="heading">
@@ -36,7 +36,7 @@ class Invoices extends Component {
                                     })}
                                     </td>
                                     <td> {invoice.discount}</td>
-                                    <td> {invoice.total}</td>
+                                    <td> {invoice.total.toFixed(2)}</td>
                                     <td>{Moment(invoice.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                                     <td>{Moment(invoice.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 </tr>
