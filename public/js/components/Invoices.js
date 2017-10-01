@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AddInvoces from './AddInvoices';
+import Moment from 'moment';
 
 class Invoices extends Component {
     render() {
@@ -33,8 +34,8 @@ class Invoices extends Component {
                                     }</td>
                                     <td> {invoices.discount}</td>
                                     <td> {invoices.total}</td>
-                                    <td>{invoices.createdAt}</td>
-                                    <td>{invoices.updatedAt}</td>
+                                    <td>{Moment(invoices.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                    <td>{Moment(invoices.updatedAt ).format('YYYY-MM-DD HH:mm')}</td>
                                 </tr>
                                 </tbody>
                             );

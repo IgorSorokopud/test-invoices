@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Moment from 'moment';
 
 class Customers extends Component {
     render() {
@@ -27,8 +28,8 @@ class Customers extends Component {
                                 <td> {customer.name}</td>
                                 <td> {customer.address}</td>
                                 <td> {customer.phone}</td>
-                                <td>{customer.createdAt}</td>
-                                <td>{customer.updatedAt}</td>
+                                <td>{Moment(customer.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td>{Moment(customer.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                             </tr>
                             </tbody>
                         );

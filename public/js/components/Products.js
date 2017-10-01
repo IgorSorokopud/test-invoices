@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import Moment from 'moment';
 
 class Products extends Component {
     render() {
@@ -26,8 +26,8 @@ class Products extends Component {
                                 <td> {index + 1}</td>
                                 <td> {product.name}</td>
                                 <td> {product.price}</td>
-                                <td>{product.createdAt}</td>
-                                <td>{product.updatedAt}</td>
+                                <td>{Moment(product.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td>{Moment(product.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                             </tr>
                             </tbody>
                         );
