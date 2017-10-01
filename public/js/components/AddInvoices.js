@@ -69,11 +69,29 @@ class AddInvoices extends Component {
             });
         });
 
-        this.props.onAddInvoice([{
+        self.props.onAddInvoice([{
             "customer_id": self.state.customerId,
             "discount": self.state.discount,
             "total": self.state.total
         }]);
+
+        self.resetForm();
+    }
+
+    resetForm () {
+        var customer = document.getElementById('customer');
+        customer.options[0].selected="selected";
+
+        var products = document.getElementById('products');
+        products.options[0].selected="selected";
+
+        document.getElementById('discount').value = '';
+
+        this.setState({
+            products: [],
+            discount: 0,
+            total: 0
+        })
     }
 
     render() {
@@ -107,7 +125,7 @@ class AddInvoices extends Component {
                         <td>
                             <div className="row">
                                 <div className="col-md-6 col-lg-12">
-                                    <select id="products" onChange={this.handleProductsChange.bind(this)}>
+                                    <select onChange={this.handleProductsChange.bind(this)} id="products">
                                         <option defaultValue="selected">Product</option>
                                         {this.props.Store.products.map(function (product, index) {
                                             return (
@@ -116,15 +134,17 @@ class AddInvoices extends Component {
                                         })}
                                     </select>
 
-                                    <ul className="list-group">
-                                        {this.state.products.map(function (product, i) {
-                                            return (
-                                                <li className="list-group-item" key={i}>{product.name}
-                                                    <span className="pull-right">{product.price}<sup> $</sup></span>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                                    <div className="pre-scrollable">
+                                        <ul className="list-group">
+                                            {this.state.products.map(function (product, i) {
+                                                return (
+                                                    <li className="list-group-item" key={i}>{product.name}
+                                                        <span className="pull-right">{product.price}<sup> $</sup></span>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </td>

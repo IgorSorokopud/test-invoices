@@ -23,19 +23,21 @@ class Invoices extends Component {
                         </tr>
                         </thead>
 
-                        {this.props.Store.invoices.map(function (invoices, index) {
-
+                        {this.props.Store.invoices.map(function (invoice, index) {
                             return (
                                 <tbody key={index}>
                                 <tr>
                                     <td> {index + 1}</td>
-                                    <td> {self.props.Store.customers[invoices.customer_id]
-                                        ? self.props.Store.customers[invoices.customer_id].name : []
-                                    }</td>
-                                    <td> {invoices.discount}</td>
-                                    <td> {invoices.total}</td>
-                                    <td>{Moment(invoices.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                                    <td>{Moment(invoices.updatedAt ).format('YYYY-MM-DD HH:mm')}</td>
+                                    <td> {self.props.Store.customers.map(function (customers, i) {
+                                        if (+customers.id === +invoice.customer_id) {
+                                            return customers.name;
+                                        }
+                                    })}
+                                    </td>
+                                    <td> {invoice.discount}</td>
+                                    <td> {invoice.total}</td>
+                                    <td>{Moment(invoice.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                    <td>{Moment(invoice.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 </tr>
                                 </tbody>
                             );
