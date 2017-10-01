@@ -47,9 +47,9 @@ class AddInvoices extends Component {
     }
 
     calculateDiscount(total) {
-        var result = (50 / 100) * 100;
+        var result = total - (total / 100 * this.state.discount);
 
-        this.setState({total: this.state.total += total});
+        this.setState({total: this.state.total += result});
     }
 
     create() {
@@ -78,12 +78,12 @@ class AddInvoices extends Component {
         self.resetForm();
     }
 
-    resetForm () {
+    resetForm() {
         var customer = document.getElementById('customer');
-        customer.options[0].selected="selected";
+        customer.options[0].selected = "selected";
 
         var products = document.getElementById('products');
-        products.options[0].selected="selected";
+        products.options[0].selected = "selected";
 
         document.getElementById('discount').value = '';
 
@@ -95,6 +95,8 @@ class AddInvoices extends Component {
     }
 
     render() {
+        var total = 0;
+
         return (
             <div className="well">
                 <table className="table table-hover table-grid">
@@ -104,6 +106,13 @@ class AddInvoices extends Component {
                         <th>Products</th>
                         <th>Discount</th>
                         <th>Sum</th>
+                        <th>Total:
+                            {this.props.Store.invoices.map(function (invoice) {
+                                total = total + invoice.total;
+                            })}
+
+                            { total.toFixed(2)}
+                        </th>
                     </tr>
                     </thead>
                     <thead>
@@ -149,7 +158,7 @@ class AddInvoices extends Component {
                             </div>
                         </td>
                         <td>
-                            <input onBlur={this.handleDiscountChange.bind(this)} id="discount" type="text"/>
+                            <input onBlur={this.handleDiscountChange.bind(this)} id="discount" type="number"/>
                         </td>
                         <td>
                             <span>{this.state.total.toFixed(2)} $</span>

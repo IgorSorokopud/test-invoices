@@ -4,5 +4,18 @@
 
 .pre-scrollable {
     max-height: 150px;
-    border: 1px solid #e3e3e3;
+    margin-top: 10px;
+}
+
+input, select {
+    outline: none;
+}
+
+.well {
+    background-color: #f8f8f8;
+}
+
+#discount {
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }

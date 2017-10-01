@@ -6,6 +6,7 @@ import Moment from 'moment';
 class Invoices extends Component {
     render() {
         var self = this;
+
         return (
             <div>
                 <AddInvoces />
@@ -23,10 +24,10 @@ class Invoices extends Component {
                         </tr>
                         </thead>
 
+                        <tbody>
                         {this.props.Store.invoices.map(function (invoice, index) {
                             return (
-                                <tbody key={index}>
-                                <tr>
+                                <tr key={index}>
                                     <td> {index + 1}</td>
                                     <td> {self.props.Store.customers.map(function (customers, i) {
                                         if (+customers.id === +invoice.customer_id) {
@@ -39,9 +40,9 @@ class Invoices extends Component {
                                     <td>{Moment(invoice.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                                     <td>{Moment(invoice.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 </tr>
-                                </tbody>
                             );
                         })}
+                        </tbody>
                     </table>
                 </div>
             </div>
