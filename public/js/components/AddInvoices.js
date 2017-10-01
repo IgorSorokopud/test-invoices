@@ -47,7 +47,6 @@ class AddInvoices extends Component {
     }
 
     calculateDiscount(total) {
-        //var element = document.getElementById('discount').value;
         var result = (50 / 100) * 100;
 
         this.setState({total: this.state.total += total});
@@ -69,6 +68,12 @@ class AddInvoices extends Component {
                 })
             });
         });
+
+        this.props.onAddInvoice([{
+            "customer_id": self.state.customerId,
+            "discount": self.state.discount,
+            "total": self.state.total
+        }]);
     }
 
     render() {

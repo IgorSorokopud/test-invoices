@@ -28748,6 +28748,12 @@ var AddInvoices = function (_Component) {
                     });
                 });
             });
+
+            this.props.onAddInvoice([{
+                "customer_id": self.state.customerId,
+                "discount": self.state.discount,
+                "total": self.state.total
+            }]);
         }
     }, {
         key: 'render',
