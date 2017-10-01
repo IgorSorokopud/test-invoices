@@ -1,3 +1,8 @@
 .btn-default {
     float: right;
 }
+
+.pre-scrollable {
+    max-height: 150px;
+    border: 1px solid #e3e3e3;
+}

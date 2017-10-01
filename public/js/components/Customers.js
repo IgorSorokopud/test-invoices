@@ -9,6 +9,7 @@ class Customers extends Component {
 
                     <thead>
                     <tr role="row" className="heading">
+                        <th>Number</th>
                         <th>Name</th>
                         <th>Address</th>
                         <th>Phone</th>
